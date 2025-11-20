@@ -11,6 +11,7 @@ import threading
 from datetime import datetime
 import requests
 import hashlib
+import hmac
 import time
 
 # Import configuration depuis variables d'environnement
@@ -222,12 +223,16 @@ def oauth_callback():
         "timestamp": timestamp
     }
     
-    # Signature
-    sorted_params = "&".join(sorted(f"{k}={v}" for k, v in params.items()))
-    sign_string = f"{ALIEXPRESS_APP_SECRET}{sorted_params}{ALIEXPRESS_APP_SECRET}"
-    signature = hashlib.sha256(sign_string.encode()).hexdigest()
+    # Signature HMAC-SHA256 (CORRECT)
+    sorted_params = sorted(params.items())
+    sign_string = "".join([f"{k}{v}" for k, v in sorted_params])
+    signature = hmac.new(
+        ALIEXPRESS_APP_SECRET.encode(),
+        sign_string.encode(),
+        hashlib.sha256
+    ).hexdigest().upper()
     
-    print(f"✅ Signature: {signature}\n")
+    print(f"✅ Signature HMAC: {signature}\n")
     
     try:
         response = requests.post(
