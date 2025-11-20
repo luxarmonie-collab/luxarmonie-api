@@ -236,7 +236,7 @@ def oauth_callback():
     
     try:
         response = requests.post(
-            "https://api-sg.aliexpress.com/rest?method=/auth/token/create",
+            "https://api-sg.aliexpress.com/sync?method=/auth/token/create",
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             data={**params, "sign": signature},
             timeout=15
