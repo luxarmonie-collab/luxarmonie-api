@@ -223,15 +223,21 @@ def oauth_callback():
         "timestamp": timestamp
     }
     
-    # Signature HMAC-SHA256 (CORRECT)
+    # Signature HMAC-SHA256 avec API path
     sorted_params = sorted(params.items())
-    sign_string = "".join([f"{k}{v}" for k, v in sorted_params])
+    params_string = "".join([f"{k}{v}" for k, v in sorted_params])
+    
+    # Ajouter le path de l'API AVANT les params
+    api_path = "/auth/token/create"
+    sign_string = api_path + params_string
+    
     signature = hmac.new(
         ALIEXPRESS_APP_SECRET.encode(),
         sign_string.encode(),
         hashlib.sha256
     ).hexdigest().upper()
     
+    print(f"📋 Sign string: {sign_string[:80]}...")
     print(f"✅ Signature HMAC: {signature}\n")
     
     try:
